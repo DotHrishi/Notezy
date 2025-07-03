@@ -88,7 +88,7 @@ const NoteDetailPage = () => {
 
           <div className="card bg-base-100">
             <div className="card-body">
-              <div className="form-control mb-4">
+              <div className="form-control mb-4 text-black">
                 <label className="label">
                   <span className="label-text">Title</span>
                 </label>
@@ -101,7 +101,7 @@ const NoteDetailPage = () => {
                 />
               </div>
 
-              <div className="form-control mb-4">
+              <div className="form-control mb-4 text-black">
                 <label className="label">
                   <span className="label-text">Content</span>
                 </label>
