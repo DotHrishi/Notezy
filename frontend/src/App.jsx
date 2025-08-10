@@ -1,6 +1,6 @@
 // === App.jsx ===
 import { Route, Routes } from "react-router";
-
+import Login from "./pages/Login"
 import HomePage from "./pages/HomePage";
 import CreatePage from "./pages/CreatePage";
 import NoteDetailPage from "./pages/NoteDetailPage";
@@ -19,6 +19,7 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/create" element={<CreatePage />} />
           <Route path="/notes/:id" element={<NoteDetailPage />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </div>
