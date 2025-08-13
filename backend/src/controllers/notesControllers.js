@@ -2,7 +2,7 @@ import Note from "../models/Note.js";
 
 export async function getAllNotes(req,res){
     try {
-        const notes=await Note.find().sort({createdAt: -1}); //newest first
+        const notes=await Note.find({user:req.user.id}).sort({createdAt: -1}).populate("user","name email"); //newest first
         res.status(200).json(notes);
     } catch (error) {
         console.error("Error in getAllNotes controller.", error);
@@ -12,7 +12,7 @@ export async function getAllNotes(req,res){
 
 export async function getNoteById(req,res){
     try {
-        const note= await Note.findById(req.params.id);
+        const note= await Note.findOne({_id:req.params.id, user:req.user.id}).populate("user","name email");
 
         if(!note){
             return res.status(404).json({messege: "Note not found!"});
@@ -28,9 +28,10 @@ export async function getNoteById(req,res){
 export async function createNote(req,res){
     try {
         const {title, content}=req.body;
-        const note = new Note({title, content});
+        const note = new Note({title, content, user:req.user.id});
 
         const savedNote=await note.save();
+        await savedNote.populate("user","name email");
         res.status(201).json(savedNote);
     } catch (error) {
         console.error("Error in createNote controller.",error);
@@ -41,10 +42,10 @@ export async function createNote(req,res){
 export async function updateNote(req,res){
     try {
         const {title,content}=req.body;
-        const updateNote = await Note.findByIdAndUpdate(req.params.id,{title,content},
-            {
-                new: true,
-            }
+        const updateNote = await Note.findOneAndUpdate(
+            {_id:req.params.id,user:req.user.id},
+            {title,content},
+            {new:true},
         );
 
         if(!updateNote){
@@ -60,7 +61,12 @@ export async function updateNote(req,res){
 
 export async function deleteNote(req,res){
     try {
-        const deleteNote= await Note.findByIdAndDelete(req.params.id);
+        const deleteNote= await Note.findOneAndDelete(
+            {
+                _id:req.params.id,
+                user:req.user.id
+            }
+        );
 
         if(!deleteNote){
             return res.status(404).json({message: "Note not found!"});

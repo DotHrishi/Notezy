@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import RateLimitedUI from "../components/RateLimitedUI";
-import { useEffect } from "react";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
 import NoteCard from "../components/NoteCard";
 import NotesNotFound from "../components/NotesNotFound";
+import { useAuth } from "../context/AuthContext";
 
 const HomePage = () => {
+  const { user } = useAuth();
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,10 +22,10 @@ const HomePage = () => {
         setNotes(res.data);
         setIsRateLimited(false);
       } catch (error) {
-        console.log("Error fetching notes.");
-        if (error.response.status === 429) {
+        console.log("Error fetching notes.", error);
+        if (error.response?.status === 429) {
           setIsRateLimited(true);
-        } else {
+        } else if (error.response?.status !== 401) {
           toast.error("Failed to load notes.");
         }
       } finally {
@@ -32,8 +33,10 @@ const HomePage = () => {
       }
     };
 
-    fetchNotes();
-  }, []);
+    if (user) {
+      fetchNotes();
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen">
@@ -41,15 +44,18 @@ const HomePage = () => {
 
       {isRateLimited && <RateLimitedUI />}
       <div className="max-w-7xl mx-auto p-4 mt-6">
-        <div className="divider divider-success text-3xl text-black">Notes 📝</div>
+        <div className="divider divider-success text-3xl text-black">
+          {user ? `${user.name}'s Notes 📝` : 'Notes 📝'}
+        </div>
+        
         {loading && (
           <div className="text-center text-primary py-10">Loading Notes...</div>
         )}
 
-        {notes.length === 0 && !isRateLimited && <NotesNotFound />}
+        {notes.length === 0 && !loading && !isRateLimited && <NotesNotFound />}
 
         {notes.length > 0 && !isRateLimited && (
-          <div className="grid gird-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {notes.map((note) => (
               <NoteCard key={note._id} note={note} setNotes={setNotes} />
             ))}

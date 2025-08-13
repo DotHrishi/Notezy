@@ -10,6 +10,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import notesRoutes from "./routes/notesRoutes.js";
 import { connectDB } from "./config/db.js";
 import rateLimiter from "./middleware/rateLimiter.js";
+import User from "./models/User.js" ;
 
 dotenv.config();
 
@@ -17,7 +18,6 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
-// ===== Session middleware (must be above passport) =====
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "devsecret",
@@ -26,6 +26,7 @@ app.use(
     cookie: {
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
+      maxAge: 24*60*60*1000,
     },
   })
 );
@@ -33,7 +34,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ===== Passport Google Strategy =====
 passport.use(
   new GoogleStrategy(
     {
@@ -42,21 +42,46 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
-      // Later: Save/find user in DB
-      return done(null, profile);
+      try {
+        let user=await User.findOne({googleId:profile.id});
+        if(user) {
+          return done(null, user);
+        }
+
+        user= new User({
+          googleId: profile.id,
+          email: profile.emails[0].value,
+          name: profile.displayName,
+          avatar: profile.photos[0].value
+        });
+
+        await user.save();
+        return done(null, user);
+      } catch(error) {
+        console.error("Error in Google Strategy!!",error);
+        return done(error, null);
+      }
     }
   )
 );
 
 passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((obj, done) => done(null, obj));
+
+passport.deserializeUser(async (id, done)=>{
+  try{
+    const user=await User.findById(id);
+    done(null, user);
+  } catch(error) {
+    done(error, null);
+  }
+});
 
 // ===== Auth routes =====
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
+  passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
     const redirectUrl =
       process.env.NODE_ENV === "production"
@@ -69,12 +94,28 @@ app.get(
 
 
 app.get("/api/user", (req, res) => {
-  res.json(req.user || null);
+  if(req.user) {
+    res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.name,
+      avatar: req.user.avatar,
+      googleId: req.user.googleId
+    });
+  } else {
+    res.json(null);
+  }
 });
 
 app.get("/api/logout", (req, res) => {
-  req.logout(() => {
-    res.redirect("/");
+  req.logout((error)=>{
+    if(error){
+      return res.status(500).json({message:"Failed to logout!"});
+    }
+    req.session.destroy(()=>{
+      res.clearCookie("connect.sid");
+      res.json({messege:"Logged out sucessfully!"});
+    });
   });
 });
 
