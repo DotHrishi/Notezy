@@ -45,9 +45,9 @@ const HomePage = () => {
       {isRateLimited && <RateLimitedUI />}
       <div className="flex-1 max-w-7xl mx-auto p-4 mt-6 w-full">
         <div className="divider divider-success text-3xl text-black">
-          {user ? `${user.name}'s Notes 📝` : 'Notes 📝'}
+          {user ? `${user.name}'s Notes 📝` : "Notes 📝"}
         </div>
-        
+
         {loading && (
           <div className="text-center text-primary py-10">Loading Notes...</div>
         )}
