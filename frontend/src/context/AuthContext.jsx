@@ -16,17 +16,18 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check if user is authenticated on app load
   useEffect(() => {
     checkAuth();
   }, []);
 
   const checkAuth = async () => {
     try {
+      console.log('Checking authentication...');
       const response = await api.get('/user');
+      console.log('Auth check successful:', response.data);
       setUser(response.data);
     } catch (error) {
-      console.log('Not authenticated');
+      console.log('Not authenticated:', error.response?.status, error.response?.data);
       setUser(null);
     } finally {
       setLoading(false);

@@ -4,16 +4,19 @@ const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001
 
 const api = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // Important: Include cookies for session-based auth
+  withCredentials: true, 
 });
 
-// Add response interceptor to handle auth errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Redirect to login on authentication errors
-      window.location.href = '/login';
+      const reqUrl = error.config?.url || '';
+      const isUserCheck = reqUrl.includes('/user');
+      const isAlreadyOnLogin = window.location.pathname === '/login';
+      if (!isUserCheck && !isAlreadyOnLogin) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
