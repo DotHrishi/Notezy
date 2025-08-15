@@ -6,7 +6,7 @@ export default function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-black via-blue-800 to-black ... text-white">
-      <img src="./public/logo-notezy.png" alt="" />
+      <img src="./public/logo-notezy.png" alt="Notezy Logo" className="w-24 sm:w-32 md:w-40 lg:w-48"/>
       <h1 className="text-3xl font-bold mb-6 text-[#66ff66]">
         Welcome to Notezy – Your thoughts, organized and elevated!
       </h1>
