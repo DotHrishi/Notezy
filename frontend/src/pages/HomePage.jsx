@@ -43,8 +43,8 @@ const HomePage = () => {
       <Navbar />
 
       {isRateLimited && <RateLimitedUI />}
-      <div className="flex-1 max-w-7xl mx-auto p-4 mt-6 w-full">
-        <div className="divider divider-success text-3xl text-black">
+      <div className="flex-1 max-w-7xl mx-auto p-4 mt-6 mb-8 w-full">
+        <div className="divider divider-success text-3xl text-black font-medium">
           {user ? `${user.name}'s Notes 📝` : "Notes 📝"}
         </div>
 
