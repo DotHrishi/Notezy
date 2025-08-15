@@ -3,6 +3,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router";
 import api from "../lib/axios";
+import Footer from "../components/Footer";
 
 const CreatePage = () => {
   const [title,setTitle]=useState("");
@@ -40,8 +41,8 @@ const CreatePage = () => {
   };
   
   return (
-  <div className="min-h-screen text-black">
-    <div className="container mx-auto px-4 py-8">
+  <div className="min-h-screen text-black flex flex-col">
+    <div className="flex-1 container mx-auto px-4 py-8">
       <Link to={"/"} className="btn btn-ghost mb-6">
       <ArrowLeftIcon className="size-5" />
       Back to Notes
@@ -84,6 +85,7 @@ const CreatePage = () => {
         </div>
       </div>
     </div>
+    <Footer />
   </div>
   );
 };

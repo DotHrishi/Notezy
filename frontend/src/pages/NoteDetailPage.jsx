@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import api from "../lib/axios";
 import toast from "react-hot-toast";
 import { ArrowLeftIcon, LoaderIcon, Trash2Icon } from "lucide-react";
+import Footer from "../components/Footer";
 
 const NoteDetailPage = () => {
   const [note, setNote] = useState(null);
@@ -72,8 +73,8 @@ const NoteDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <Link to="/" className="btn btn-ghost">
@@ -122,6 +123,7 @@ const NoteDetailPage = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

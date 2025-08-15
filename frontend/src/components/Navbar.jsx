@@ -33,7 +33,7 @@ const Navbar = () => {
                   className="btn btn-ghost btn-circle avatar"
                 >
                   {user.avatar ? (
-                    <div className="w-10 rounded-full">
+                    <div className="w-10 rounded-full border-2 border-[#66ff66]">
                       <img
                         alt={user.name}
                         src={user.avatar}
@@ -46,10 +46,10 @@ const Navbar = () => {
                 </div>
                 <ul
                   tabIndex={0}
-                  className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+                  className="menu bg-black menu-sm dropdown-content rounded-box z-[1] mt-3 w-52 p-2 shadow"
                 >
                   <li className="menu-title">
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-[#66ff66] text-2xl">
                       {user.name}
                     </span>
                     <span className="text-xs text-gray-400">

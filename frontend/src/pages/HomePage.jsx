@@ -39,11 +39,11 @@ const HomePage = () => {
   }, [user]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
 
       {isRateLimited && <RateLimitedUI />}
-      <div className="max-w-7xl mx-auto p-4 mt-6">
+      <div className="flex-1 max-w-7xl mx-auto p-4 mt-6 w-full">
         <div className="divider divider-success text-3xl text-black">
           {user ? `${user.name}'s Notes 📝` : 'Notes 📝'}
         </div>
@@ -61,8 +61,6 @@ const HomePage = () => {
             ))}
           </div>
         )}
-
-        <div className="divider divider-warning text-3xl mt-7 text-black">Tasks ☑️</div>
       </div>
       <Footer />
     </div>
