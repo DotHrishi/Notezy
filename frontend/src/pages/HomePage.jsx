@@ -33,7 +33,6 @@ const HomePage = () => {
       }
     };
 
-    // In development, always fetch notes. In production, only if user is authenticated
     const isDevelopment = import.meta.env.DEV;
     if (user || isDevelopment) {
       fetchNotes();
@@ -47,8 +46,8 @@ const HomePage = () => {
       <Navbar />
 
       {isRateLimited && <RateLimitedUI />}
-      <div className="flex-1 max-w-7xl mx-auto p-4 mt-6 mb-8 w-full">
-        <div className="divider divider-success text-3xl text-black font-medium">
+      <div className="flex-1 max-w-7xl mx-auto p-4 mt-6 w-full">
+        <div className="divider divider-success text-3xl text-black">
           {user ? `${user.name}'s Notes 📝` : "Notes 📝"}
         </div>
 
@@ -56,36 +55,21 @@ const HomePage = () => {
           <div className="text-center text-primary py-10">Loading Notes...</div>
         )}
 
-        {notes.length === 0 && !loading && !isRateLimited && (
-          <div className="text-center py-10">
-            <NotesNotFound />
-            {import.meta.env.DEV && (
-              <button
-                className="btn btn-primary mt-4"
-                onClick={async () => {
-                  try {
-                    await api.get("/seed-dev-notes");
-                    // Refresh notes after seeding
-                    const res = await api.get("/notes");
-                    setNotes(res.data);
-                    toast.success("Sample notes created!");
-                  } catch (error) {
-                    console.error("Error seeding notes:", error);
-                    toast.error("Failed to create sample notes");
-                  }
-                }}
-              >
-                Create Sample Notes for Development
-              </button>
-            )}
-          </div>
-        )}
+        {notes.length === 0 && !loading && !isRateLimited && <NotesNotFound />}
 
         {notes.length > 0 && !isRateLimited && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {notes.map((note) => (
-              <NoteCard key={note._id} note={note} setNotes={setNotes} />
-            ))}
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {notes.slice(0,6).map((note) => (
+                <NoteCard key={note._id} note={note} setNotes={setNotes} />
+              ))}
+            </div>
+
+            <button onClick={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {notes.map((note) => (
+                <NoteCard key={note._id} note={note} setNotes={setNotes} />
+              ))}
+            </div>}>View All ⬇️</button>
           </div>
         )}
       </div>

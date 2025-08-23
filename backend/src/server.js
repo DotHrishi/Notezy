@@ -183,63 +183,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Add sample notes for local development
-app.get("/api/seed-dev-notes", async (req, res) => {
-  if (process.env.NODE_ENV === "production") {
-    return res.status(403).json({ message: "Not available in production" });
-  }
-
-  try {
-    const Note = (await import("./models/Note.js")).default;
-    
-    // Check if dev notes already exist
-    const existingNotes = await Note.find({ user: "dev-user-id" });
-    if (existingNotes.length > 0) {
-      return res.json({ message: "Dev notes already exist", count: existingNotes.length });
-    }
-
-    // Create sample notes
-    const sampleNotes = [
-      {
-        title: "Welcome to Your Notes App! 🎉",
-        content: "This is your first note! You can create, edit, delete, and now pin notes. Try pinning this note to keep it at the top!",
-        user: "dev-user-id",
-        pinned: true
-      },
-      {
-        title: "Shopping List 🛒",
-        content: "- Milk\n- Bread\n- Eggs\n- Coffee\n- Bananas\n- Chicken\n- Rice",
-        user: "dev-user-id",
-        pinned: false
-      },
-      {
-        title: "Meeting Notes 📝",
-        content: "Project kickoff meeting:\n- Discussed timeline\n- Assigned tasks\n- Next meeting: Friday 2PM\n- Review requirements document",
-        user: "dev-user-id",
-        pinned: false
-      },
-      {
-        title: "Important Reminder ⭐",
-        content: "Don't forget to:\n- Submit the report by EOD\n- Call the client tomorrow\n- Review the presentation slides\n- Book the conference room",
-        user: "dev-user-id",
-        pinned: true
-      },
-      {
-        title: "Book Recommendations 📚",
-        content: "Books to read:\n- The Clean Code\n- Design Patterns\n- You Don't Know JS\n- Atomic Habits\n- The Pragmatic Programmer",
-        user: "dev-user-id",
-        pinned: false
-      }
-    ];
-
-    const createdNotes = await Note.insertMany(sampleNotes);
-    res.json({ message: "Sample notes created successfully!", count: createdNotes.length });
-  } catch (error) {
-    console.error("Error creating sample notes:", error);
-    res.status(500).json({ message: "Failed to create sample notes" });
-  }
-});
-
 app.use("/api/notes", notesRoutes);
 
 

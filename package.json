@@ -17,5 +17,9 @@
     "url": "https://github.com/DotHrishi/Notezy/issues"
   },
   "homepage": "https://github.com/DotHrishi/Notezy#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "googleapis": "^105.0.0"
+  }
 }
