@@ -13,6 +13,7 @@ const HomePage = () => {
   const [isRateLimited, setIsRateLimited] = useState(false);
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -60,16 +61,21 @@ const HomePage = () => {
         {notes.length > 0 && !isRateLimited && (
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {notes.slice(0,6).map((note) => (
+              {(showAll ? notes : notes.slice(0, 6)).map((note) => (
                 <NoteCard key={note._id} note={note} setNotes={setNotes} />
               ))}
             </div>
 
-            <button onClick={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {notes.map((note) => (
-                <NoteCard key={note._id} note={note} setNotes={setNotes} />
-              ))}
-            </div>}>View All ⬇️</button>
+            {notes.length > 6 && (
+              <div className="text-center mt-8">
+                <button
+                  className="btn btn-ghost text-black text-xl"
+                  onClick={() => setShowAll(!showAll)}
+                >
+                  {showAll ? "Show Less ⬆️" : "View More ⬇️"}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
