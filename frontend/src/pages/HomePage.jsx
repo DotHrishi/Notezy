@@ -33,8 +33,12 @@ const HomePage = () => {
       }
     };
 
-    if (user) {
+    // In development, always fetch notes. In production, only if user is authenticated
+    const isDevelopment = import.meta.env.DEV;
+    if (user || isDevelopment) {
       fetchNotes();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
@@ -52,7 +56,30 @@ const HomePage = () => {
           <div className="text-center text-primary py-10">Loading Notes...</div>
         )}
 
-        {notes.length === 0 && !loading && !isRateLimited && <NotesNotFound />}
+        {notes.length === 0 && !loading && !isRateLimited && (
+          <div className="text-center py-10">
+            <NotesNotFound />
+            {import.meta.env.DEV && (
+              <button
+                className="btn btn-primary mt-4"
+                onClick={async () => {
+                  try {
+                    await api.get("/seed-dev-notes");
+                    // Refresh notes after seeding
+                    const res = await api.get("/notes");
+                    setNotes(res.data);
+                    toast.success("Sample notes created!");
+                  } catch (error) {
+                    console.error("Error seeding notes:", error);
+                    toast.error("Failed to create sample notes");
+                  }
+                }}
+              >
+                Create Sample Notes for Development
+              </button>
+            )}
+          </div>
+        )}
 
         {notes.length > 0 && !isRateLimited && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
