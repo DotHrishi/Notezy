@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="footer bg-black">
+    <footer className="footer footer-horizontal bg-black text-white-content p-5">
   <aside>
     <img src="./logo-notezy.png" alt="Notezy Logo" width={200} />
     <p className="font-bold">
@@ -14,4 +14,4 @@ const Footer = () => {
   )
 }
 
-export default Footer;
+export default Footer
